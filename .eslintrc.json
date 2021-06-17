@@ -47,7 +47,6 @@
       }
     ],
     "no-restricted-syntax": "off",
-    "no-await-in-loop": "warn",
     "no-underscore-dangle": "off",
     "max-classes-per-file": "off",
     "no-use-before-define": "off",

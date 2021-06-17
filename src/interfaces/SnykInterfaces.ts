@@ -1,4 +1,5 @@
 import { IAnalysisResult, IFileBundle, IFilePath, IFileSuggestion, ISuggestion, ISuggestions } from '@snyk/code-client';
+import { IpFamily } from '@snyk/code-client/dist/http';
 import * as vscode from 'vscode';
 import { DiagnosticCollection, ExtensionContext, StatusBarItem, TextDocument, TextEditor } from 'vscode';
 import { Segment } from '../snyk/analytics/segment';
@@ -39,7 +40,7 @@ export interface ReportModuleInterface {
 
 export interface LoginModuleInterface {
   initiateLogin(): Promise<void>;
-  checkSession(): Promise<string>;
+  checkSession(draftToken: string, ipFamily?: IpFamily): Promise<string>;
   enableCode(): Promise<void>;
   checkCodeEnabled(): Promise<boolean>;
   checkAdvancedMode(): Promise<void>;
