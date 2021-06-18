@@ -57,10 +57,9 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
     try {
       const paths = (vscode.workspace.workspaceFolders || []).map(f => f.uri.fsPath);
 
-      this.analytics.logEvent('Analysis Is Triggered', {
+      this.analytics.analysisIsTriggered({
         analysisType: 'Code Security',
         ide: 'Visual Studio Code',
-        userId: this.userId,
       });
 
       if (paths.length) {
@@ -88,11 +87,11 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
           this.analyzer.analysisResults = result.analysisResults;
           this.analyzer.createReviewResults();
 
-          this.analytics.logEvent('Analysis Is Ready', {
+          this.analytics.analysisIsReady({
             ide: 'Visual Studio Code',
             product: 'Snyk Code',
             type: 'Security vulnerabilities',
-            userId: this.userId,
+            result: 'Success',
           });
 
           this.refreshViews();
@@ -104,6 +103,12 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
     } catch (err) {
       await this.processError(err, {
         message: errorsLogs.failedAnalysis,
+      });
+      this.analytics.analysisIsReady({
+        ide: 'Visual Studio Code',
+        product: 'Snyk Code',
+        type: 'Security vulnerabilities',
+        result: 'Error',
       });
     } finally {
       this.runningAnalysis = false;
