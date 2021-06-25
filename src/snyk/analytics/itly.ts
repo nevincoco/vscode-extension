@@ -2,11 +2,7 @@
 import SegmentPlugin from '@itly/plugin-segment-node';
 import { v4 as uuidv4 } from 'uuid';
 import { ILog } from '../../interfaces/loggerInterface';
-import itly, {
-  AnalysisIsReadyProperties,
-  IssueIsViewedProperties,
-  PerformAnalysisIsClickedProperties,
-} from '../../itly';
+import itly, { AnalysisIsReadyProperties, AnalysisIsTriggeredProperties, IssueIsViewedProperties } from '../../itly';
 import { ItlyErrorPlugin } from './itlyErrorPlugin';
 
 /**
@@ -81,8 +77,14 @@ export class Iteratively {
                 name: this.ide,
                 version,
               },
+              testIde: this.ide, // first try
             },
+            traits: {
+              testIde: this.ide, // first try
+            },
+            testUserIde: this.ide, // second try
           },
+          testUserIdeRandom: this.ide, // third try
         },
       },
     );
@@ -104,12 +106,12 @@ export class Iteratively {
     itly.analysisIsReady(this.userId, properties);
   }
 
-  public analysisIsTriggered(properties: PerformAnalysisIsClickedProperties): void {
+  public analysisIsTriggered(properties: AnalysisIsTriggeredProperties): void {
     if (!this.canReportEvents() || !this.userId) {
       return;
     }
 
-    itly.performAnalysisIsClicked(this.userId, properties);
+    itly.analysisIsTriggered(this.userId, properties);
   }
 
   public welcomeViewIsViewed(): void {

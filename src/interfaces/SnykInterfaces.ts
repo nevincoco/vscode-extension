@@ -44,7 +44,7 @@ export interface BundlesModuleInterface {
   readonly runningAnalysis: boolean;
   readonly lastAnalysisDuration: number;
   readonly lastAnalysisTimestamp: number;
-  startAnalysis(): Promise<void>;
+  startAnalysis(manual: boolean): Promise<void>;
 }
 
 export interface SnykLibInterface {

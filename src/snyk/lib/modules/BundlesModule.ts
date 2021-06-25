@@ -50,7 +50,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
     });
   }
 
-  public async startAnalysis(): Promise<void> {
+  public async startAnalysis(manual: boolean): Promise<void> {
     if (this.runningAnalysis) {
       return;
     }
@@ -60,6 +60,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       this.analytics.analysisIsTriggered({
         analysisType: 'Code Security',
         ide: 'Visual Studio Code',
+        triggeredByUser: manual,
       });
 
       if (paths.length) {

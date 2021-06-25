@@ -149,6 +149,31 @@ export interface AnalysisIsReadyProperties {
   result: "Success" | "Error";
 }
 
+export interface AnalysisIsTriggeredProperties {
+  /**
+   * Ide family.
+   *
+   * | Rule | Value |
+   * |---|---|
+   * | Enum Values | Visual Studio Code, Visual Studio, Eclipse, JetBrains |
+   */
+  ide: "Visual Studio Code" | "Visual Studio" | "Eclipse" | "JetBrains";
+  /**
+   * Analysis types selected by the user for the scan: open source vulnerabilities, code quality issues and/or code security vulnerabilities.
+   *
+   * | Rule | Value |
+   * |---|---|
+   * | Enum Values | Open Source Vulnerabilities, Code Security, Code Quality, Advisor |
+   */
+  analysisType: "Open Source Vulnerabilities" | "Code Security" | "Code Quality" | "Advisor";
+  /**
+   * * True means that the analysis was triggered by the User.
+   *
+   * * False means that the analysis was triggered automatically by the plugin.
+   */
+  triggeredByUser: boolean;
+}
+
 export interface IssueIsViewedProperties {
   /**
    * Ide family.
@@ -183,25 +208,6 @@ export interface IssueIsViewedProperties {
    * Issue ID as received from the backend.
    */
   issueId: string;
-}
-
-export interface PerformAnalysisIsClickedProperties {
-  /**
-   * Ide family.
-   *
-   * | Rule | Value |
-   * |---|---|
-   * | Enum Values | Visual Studio Code, Visual Studio, Eclipse, JetBrains |
-   */
-  ide: "Visual Studio Code" | "Visual Studio" | "Eclipse" | "JetBrains";
-  /**
-   * Analysis types selected by the user for the scan: open source vulnerabilities, code quality issues and/or code security vulnerabilities.
-   *
-   * | Rule | Value |
-   * |---|---|
-   * | Enum Values | Open Source Vulnerabilities, Code Security, Code Quality, Advisor |
-   */
-  analysisType: "Open Source Vulnerabilities" | "Code Security" | "Code Quality" | "Advisor";
 }
 
 export interface PluginIsInstalledProperties {
@@ -240,13 +246,31 @@ export interface WelcomeIsViewedProperties {
 export class AnalysisIsReady implements Event {
   name = 'Analysis Is Ready';
   id = 'c9337edb-27a3-416e-a654-092fa4375feb';
-  version = '7.0.0';
+  version = '9.0.0';
   properties: AnalysisIsReadyProperties & {
     'itly': true;
   };
 
   constructor(
     properties: AnalysisIsReadyProperties,
+  ) {
+    this.properties = {
+        ...properties,
+        'itly': true,
+      };
+  }
+}
+
+export class AnalysisIsTriggered implements Event {
+  name = 'Analysis Is Triggered';
+  id = 'dabf569e-219c-470f-8e31-6e029723f0cd';
+  version = '6.0.0';
+  properties: AnalysisIsTriggeredProperties & {
+    'itly': true;
+  };
+
+  constructor(
+    properties: AnalysisIsTriggeredProperties,
   ) {
     this.properties = {
         ...properties,
@@ -265,24 +289,6 @@ export class IssueIsViewed implements Event {
 
   constructor(
     properties: IssueIsViewedProperties,
-  ) {
-    this.properties = {
-        ...properties,
-        'itly': true,
-      };
-  }
-}
-
-export class PerformAnalysisIsClicked implements Event {
-  name = 'Perform Analysis Is Clicked';
-  id = '3fdb2c71-84cf-4e2d-82b9-0b7b8e94e53a';
-  version = '2.0.0';
-  properties: PerformAnalysisIsClickedProperties & {
-    'itly': true;
-  };
-
-  constructor(
-    properties: PerformAnalysisIsClickedProperties,
   ) {
     this.properties = {
         ...properties,
@@ -387,7 +393,7 @@ class Itly {
           ? '5HB-hbvnCrU6EhiR-byG-pFwFAnceLbW'
           : 'nFVaJJwOdaJn9ETw_3DRSpFpg790tzEi',
           {
-            url: 'https://api.iterative.ly/t/version/92f9ce1f-2b46-482e-9c05-7cc0508dd0de',
+            url: 'https://api.iterative.ly/t/version/57e883e3-17e7-452d-927d-8ee0447e5b68',
             environment: options.environment || 'development',
             ...destinations.iteratively,
           },
@@ -401,8 +407,8 @@ class Itly {
           'group': {"type":"object","properties":{"groupId":{"type":"string"},"name":{"type":"string"},"internalName":{"type":"string"},"groupType":{"enum":["org","group","account"]},"plan":{"type":"string"},"groupName":{"type":"string"}},"additionalProperties":false,"required":[]},
           'identify': {"type":"object","properties":{"name":{"type":"string"},"utmMedium":{"type":"string"},"adminLink":{"type":"string"},"createdAt":{"type":"number"},"utmSource":{"type":"string"},"email":{"type":"string"},"authProvider":{"type":"string"},"isSnykAdmin":{"type":"boolean"},"username":{"type":"string"},"utmCampaign":{"type":"string"}},"additionalProperties":false,"required":[]},
           'Analysis Is Ready': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true},"product":{"enum":["Snyk Code","Snyk Open Source","Snyk Advisor"]},"type":{"enum":["Quality issues","Security vulnerabilities","Health score"]},"result":{"enum":["Success","Error"]}},"additionalProperties":false,"required":["ide","itly","product","type","result"]},
+          'Analysis Is Triggered': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true},"analysisType":{"enum":["Open Source Vulnerabilities","Code Security","Code Quality","Advisor"]},"triggeredByUser":{"type":"boolean"}},"additionalProperties":false,"required":["ide","itly","analysisType","triggeredByUser"]},
           'Issue Is Viewed': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"issueType":{"enum":["Open Source Vulnerability","Licence Issue","Code Quality Issue","Code Security Vulnerability","Advisor"]},"severity":{"enum":["High","Medium","Low","Critical"]},"issueId":{"type":"string"},"itly":{"const":true}},"additionalProperties":false,"required":["ide","issueType","severity","issueId","itly"]},
-          'Perform Analysis Is Clicked': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true},"analysisType":{"enum":["Open Source Vulnerabilities","Code Security","Code Quality","Advisor"]}},"additionalProperties":false,"required":["ide","itly","analysisType"]},
           'Plugin Is Installed': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true}},"additionalProperties":false,"required":["ide","itly"]},
           'Plugin Is Uninstalled': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true}},"additionalProperties":false,"required":["ide","itly"]},
           'Welcome Is Viewed': {"type":"object","properties":{"ide":{"enum":["Visual Studio Code","Visual Studio","Eclipse","JetBrains"]},"itly":{"const":true}},"additionalProperties":false,"required":["ide","itly"]},
@@ -470,6 +476,22 @@ class Itly {
   }
 
   /**
+   * User triggers an analysis or analysis is automatically triggered.
+   * 
+   * Owner: Georgi 
+   * @param userId The user's ID.
+   * @param properties The event's properties (e.g. ide)
+   * @param options Options for this track call.
+   */
+  analysisIsTriggered(
+    userId: string,
+    properties: AnalysisIsTriggeredProperties,
+    options?: TrackOptions,
+  ) {
+    this.itly.track(userId, new AnalysisIsTriggered(properties), options);
+  }
+
+  /**
    * Triggered when the user selects an issue from the issues list and the issue is loaded.
    * 
    * Owner: Georgi 
@@ -483,22 +505,6 @@ class Itly {
     options?: TrackOptions,
   ) {
     this.itly.track(userId, new IssueIsViewed(properties), options);
-  }
-
-  /**
-   * User triggers an analysis
-   * 
-   * Owner: Georgi 
-   * @param userId The user's ID.
-   * @param properties The event's properties (e.g. ide)
-   * @param options Options for this track call.
-   */
-  performAnalysisIsClicked(
-    userId: string,
-    properties: PerformAnalysisIsClickedProperties,
-    options?: TrackOptions,
-  ) {
-    this.itly.track(userId, new PerformAnalysisIsClicked(properties), options);
   }
 
   /**

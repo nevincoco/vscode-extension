@@ -66,7 +66,7 @@ export default class SnykLib extends BundlesModule implements SnykLibInterface {
         this.analytics.alias(user.id);
       }
 
-      await this.startAnalysis();
+      await this.startAnalysis(manual);
     } catch (err) {
       await this.processError(err, {
         message: errorsLogs.failedExecutionDebounce,
