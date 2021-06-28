@@ -58,7 +58,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       const paths = (vscode.workspace.workspaceFolders || []).map(f => f.uri.fsPath);
 
       this.analytics.analysisIsTriggered({
-        analysisType: 'Code Security',
+        analysisType: ['Snyk Code Security', 'Snyk Code Quality'],
         ide: 'Visual Studio Code',
         triggeredByUser: manual,
       });
@@ -90,8 +90,12 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
 
           this.analytics.analysisIsReady({
             ide: 'Visual Studio Code',
-            product: 'Snyk Code',
-            type: 'Security vulnerabilities',
+            analysisType: 'Snyk Code Security',
+            result: 'Success',
+          });
+          this.analytics.analysisIsReady({
+            ide: 'Visual Studio Code',
+            analysisType: 'Snyk Code Quality',
             result: 'Success',
           });
 
@@ -107,8 +111,12 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       });
       this.analytics.analysisIsReady({
         ide: 'Visual Studio Code',
-        product: 'Snyk Code',
-        type: 'Security vulnerabilities',
+        analysisType: 'Snyk Code Security',
+        result: 'Error',
+      });
+      this.analytics.analysisIsReady({
+        ide: 'Visual Studio Code',
+        analysisType: 'Snyk Code Quality',
         result: 'Error',
       });
     } finally {

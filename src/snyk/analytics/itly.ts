@@ -2,8 +2,21 @@
 import SegmentPlugin from '@itly/plugin-segment-node';
 import { v4 as uuidv4 } from 'uuid';
 import { ILog } from '../../interfaces/loggerInterface';
-import itly, { AnalysisIsReadyProperties, AnalysisIsTriggeredProperties, IssueIsViewedProperties } from '../../itly';
+import itly, {
+  AnalysisIsReadyProperties,
+  AnalysisIsTriggeredProperties as _AnalysisIsTriggeredProperties,
+  IssueIsViewedProperties,
+} from '../../itly';
 import { ItlyErrorPlugin } from './itlyErrorPlugin';
+
+export type SupportedAnalysisProperties =
+  | 'Snyk Advisor'
+  | 'Snyk Code Quality'
+  | 'Snyk Code Security'
+  | 'Snyk Open Source';
+export type AnalysisIsTriggeredProperties = _AnalysisIsTriggeredProperties & {
+  analysisType: SupportedAnalysisProperties[];
+};
 
 /**
  * Do not have any dependencies on 'vscode' module to prevent uninstall hook from breaking.
