@@ -47,7 +47,7 @@ export default class SnykLib extends BundlesModule implements SnykLibInterface {
     this.loadingBadge.setLoadingBadge(false, this);
 
     if (!configuration.token) {
-      this.analytics.welcomeViewIsViewed();
+      this.analytics.logWelcomeViewIsViewed();
 
       await this.checkSession();
       return;

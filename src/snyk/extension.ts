@@ -147,7 +147,7 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
             this.suggestionProvider.show(suggestion.id, uri, range);
             suggestion.id = decodeURIComponent(suggestion.id);
 
-            this.analytics.issueIsViewed({
+            this.analytics.logIssueIsViewed({
               ide: 'Visual Studio Code',
               issueId: suggestion.id,
               issueType: 'Code Security Vulnerability',
@@ -190,7 +190,7 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
     // Use memento until lifecycle hooks are implemented
     // https://github.com/microsoft/vscode/issues/98732
     if (!context.globalState.get(MEMENTO_FIRST_INSTALL_DATE_KEY)) {
-      this.analytics.pluginIsInstalled();
+      this.analytics.logPluginIsInstalled();
       void context.globalState.update(MEMENTO_FIRST_INSTALL_DATE_KEY, Date.now());
     }
 

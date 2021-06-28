@@ -57,7 +57,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
     try {
       const paths = (vscode.workspace.workspaceFolders || []).map(f => f.uri.fsPath);
 
-      this.analytics.analysisIsTriggered({
+      this.analytics.logAnalysisIsTriggered({
         analysisType: ['Snyk Code Security', 'Snyk Code Quality'],
         ide: 'Visual Studio Code',
         triggeredByUser: manual,
@@ -88,12 +88,12 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
           this.analyzer.analysisResults = result.analysisResults;
           this.analyzer.createReviewResults();
 
-          this.analytics.analysisIsReady({
+          this.analytics.logAnalysisIsReady({
             ide: 'Visual Studio Code',
             analysisType: 'Snyk Code Security',
             result: 'Success',
           });
-          this.analytics.analysisIsReady({
+          this.analytics.logAnalysisIsReady({
             ide: 'Visual Studio Code',
             analysisType: 'Snyk Code Quality',
             result: 'Success',
@@ -109,12 +109,12 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       await this.processError(err, {
         message: errorsLogs.failedAnalysis,
       });
-      this.analytics.analysisIsReady({
+      this.analytics.logAnalysisIsReady({
         ide: 'Visual Studio Code',
         analysisType: 'Snyk Code Security',
         result: 'Error',
       });
-      this.analytics.analysisIsReady({
+      this.analytics.logAnalysisIsReady({
         ide: 'Visual Studio Code',
         analysisType: 'Snyk Code Quality',
         result: 'Error',

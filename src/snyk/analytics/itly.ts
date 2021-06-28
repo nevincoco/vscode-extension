@@ -103,7 +103,7 @@ export class Iteratively {
     );
   }
 
-  public issueIsViewed(properties: IssueIsViewedProperties): void {
+  public logIssueIsViewed(properties: IssueIsViewedProperties): void {
     if (!this.canReportEvents() || !this.userId) {
       return;
     }
@@ -111,7 +111,7 @@ export class Iteratively {
     itly.issueIsViewed(this.userId, properties);
   }
 
-  public analysisIsReady(properties: AnalysisIsReadyProperties): void {
+  public logAnalysisIsReady(properties: AnalysisIsReadyProperties): void {
     if (!this.canReportEvents() || !this.userId) {
       return;
     }
@@ -119,7 +119,7 @@ export class Iteratively {
     itly.analysisIsReady(this.userId, properties);
   }
 
-  public analysisIsTriggered(properties: AnalysisIsTriggeredProperties): void {
+  public logAnalysisIsTriggered(properties: AnalysisIsTriggeredProperties): void {
     if (!this.canReportEvents() || !this.userId) {
       return;
     }
@@ -127,7 +127,7 @@ export class Iteratively {
     itly.analysisIsTriggered(this.userId, properties);
   }
 
-  public welcomeViewIsViewed(): void {
+  public logWelcomeViewIsViewed(): void {
     if (!this.canReportEvents()) {
       return;
     }
@@ -139,7 +139,7 @@ export class Iteratively {
     });
   }
 
-  public pluginIsInstalled(): boolean {
+  public logPluginIsInstalled(): boolean {
     if (!this.canReportEvents()) {
       return false;
     }
@@ -151,7 +151,7 @@ export class Iteratively {
     return true;
   }
 
-  public pluginIsUninstalled(userId?: string): boolean {
+  public logPluginIsUninstalled(userId?: string): boolean {
     if (!userId) {
       userId = this.userId;
     }
