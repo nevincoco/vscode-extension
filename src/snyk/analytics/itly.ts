@@ -90,14 +90,8 @@ export class Iteratively {
                 name: this.ide,
                 version,
               },
-              testIde: this.ide, // first try
             },
-            traits: {
-              testIde: this.ide, // first try
-            },
-            testUserIde: this.ide, // second try
           },
-          testUserIdeRandom: this.ide, // third try
         },
       },
     );
@@ -139,32 +133,28 @@ export class Iteratively {
     });
   }
 
-  public logPluginIsInstalled(): boolean {
+  public logPluginIsInstalled(): void {
     if (!this.canReportEvents()) {
-      return false;
+      return;
     }
 
     itly.pluginIsInstalled(this.anonymousId, {
       ide: this.ide,
     });
-
-    return true;
   }
 
-  public logPluginIsUninstalled(userId?: string): boolean {
+  public logPluginIsUninstalled(userId?: string): void {
     if (!userId) {
       userId = this.userId;
     }
 
     if (!this.canReportEvents() || !userId) {
-      return false;
+      return;
     }
 
     itly.pluginIsUninstalled(userId, {
       ide: this.ide,
     });
-
-    return true;
   }
 
   private canReportEvents(): boolean {
