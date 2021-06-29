@@ -275,6 +275,7 @@
     "yalc": "^1.0.0-pre.44"
   },
   "dependencies": {
+    "@amplitude/experiment-node-server": "^1.0.0",
     "@itly/plugin-iteratively-node": "^2.3.1",
     "@itly/plugin-schema-validator": "^2.3.1",
     "@itly/plugin-segment-node": "^2.3.1",
