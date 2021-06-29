@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { errorType } from '../../interfaces/SnykInterfaces';
 import { configuration } from '../configuration';
+import { Amplitude } from '../experiments/amplitude';
 import { errorsLogs } from '../messages/errorsServerLogMessages';
 import { snykMessages } from '../messages/snykMessages';
 import { openSnykViewContainer } from '../utils/vscodeCommandsUtils';
@@ -18,6 +19,10 @@ export class NotificationService {
     if (!configuration.shouldShowWelcomeNotification) {
       return;
     }
+
+    const amplitude = new Amplitude();
+    await amplitude.init();
+    amplitude.isShowWelcomeMessageExperimentEnabled();
 
     const pressedButton = await vscode.window.showInformationMessage(
       snykMessages.welcome.msg,
