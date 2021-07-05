@@ -60,7 +60,7 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
     return this.debouncedCommands[name](...args);
   }
 
-  public activate(context: vscode.ExtensionContext): void {
+  public async activate(context: vscode.ExtensionContext): Promise<void> {
     this.context = context;
     this.emitter.on(this.emitter.events.supportedFilesLoaded, this.onSupportedFilesLoaded.bind(this));
     this.emitter.on(this.emitter.events.scanFilesProgress, this.onScanFilesProgress.bind(this));
