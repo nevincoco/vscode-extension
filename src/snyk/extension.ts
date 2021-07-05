@@ -22,6 +22,7 @@ import BundlesModule from './lib/modules/BundlesModule';
 import SnykLib from './lib/modules/SnykLib';
 import createFileWatcher from './lib/watchers/FilesWatcher';
 import { errorsLogs } from './messages/errorsServerLogMessages';
+import { CliDownloader } from './sast/cliDownloader';
 import { NotificationService } from './services/notificationService';
 import { severityAsText } from './utils/analysisUtils';
 import { createDCIgnoreCommand, openSnykSettingsCommand } from './utils/vscodeCommandsUtils';
@@ -192,6 +193,9 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
       this.analytics.logPluginIsInstalled();
       void context.globalState.update(MEMENTO_FIRST_INSTALL_DATE_KEY, Date.now());
     }
+
+    const cliDownloader = new CliDownloader();
+    await cliDownloader.downloadCli();
 
     // Actually start analysis
     this.startExtension();
