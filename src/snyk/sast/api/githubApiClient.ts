@@ -1,17 +1,18 @@
-import axios, { AxiosInstance } from "axios";
-import { Logger } from "../../logger";
+import axios, { AxiosInstance } from 'axios';
+import { Logger } from '../../logger';
 import fs from 'fs';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { Stream } from 'stream';
+import path from 'path';
 const finished = promisify(stream.finished);
 
 export interface IReleaseInfo {
- id: number,
- url: string,
- name: string,
- // eslint-disable-next-line camelcase
- tag_name: string
+  id: number;
+  url: string;
+  name: string;
+  // eslint-disable-next-line camelcase
+  tag_name: string;
 }
 
 export class GithubApiClient {
@@ -41,14 +42,19 @@ export class GithubApiClient {
   }
 
   // https://stackoverflow.com/questions/55374755/node-js-axios-download-file-stream-and-writefile
-  async getLatestReleaseBinary(tag: string, platform: string, outputLocationPath: string): Promise<void> {
-    const writer = fs.createWriteStream(outputLocationPath);
-    return this.http.get<Stream>(`https://github.com/snyk/snyk/releases/download/${tag}/${platform}`, {
-      responseType: 'stream',
-    }).then(async response => {
-      response.data.pipe(writer);
-      return finished(writer);
+  async getLatestReleaseBinary(tag: string, platform: string, outputLocationPath: string): Promise<string> {
+    const downloadPath = path.join(outputLocationPath, platform);
+    const writer = fs.createWriteStream(path.join(outputLocationPath, platform), {
+      mode: 0o744,
     });
-
+    return this.http
+      .get<Stream>(`https://github.com/snyk/snyk/releases/download/${tag}/${platform}`, {
+        responseType: 'stream',
+      })
+      .then(async response => {
+        response.data.pipe(writer);
+        return finished(writer);
+      })
+      .then(() => downloadPath);
   }
 }

@@ -22,6 +22,7 @@ import BundlesModule from './lib/modules/BundlesModule';
 import SnykLib from './lib/modules/SnykLib';
 import createFileWatcher from './lib/watchers/FilesWatcher';
 import { errorsLogs } from './messages/errorsServerLogMessages';
+import { Cli } from './sast/cli';
 import { CliDownloader } from './sast/cliDownloader';
 import { NotificationService } from './services/notificationService';
 import { severityAsText } from './utils/analysisUtils';
@@ -195,7 +196,11 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
     }
 
     const cliDownloader = new CliDownloader();
-    await cliDownloader.downloadCli();
+    const path = await cliDownloader.downloadCli();
+    if (path) {
+      const cli = new Cli();
+      cli.scan(path);
+    }
 
     // Actually start analysis
     this.startExtension();
