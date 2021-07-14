@@ -32,6 +32,11 @@ export class Iteratively {
     this.anonymousId = uuidv4();
   }
 
+  public setShouldReportEvents(shouldReportEvents: boolean): void {
+    this.shouldReportEvents = shouldReportEvents;
+    this.load();
+  }
+
   public load(): Iteratively | null {
     if (!this.shouldReportEvents) {
       return null;
@@ -165,7 +170,7 @@ export class Iteratively {
     });
   }
 
-  private canReportEvents(): boolean {
+  public canReportEvents(): boolean {
     if (!this.loaded) {
       this.logger.debug('Cannot report events because Iteratively not loaded.');
       return false;
