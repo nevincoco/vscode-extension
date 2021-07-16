@@ -170,7 +170,7 @@ export class Iteratively {
     });
   }
 
-  public canReportEvents(): boolean {
+  private canReportEvents(): boolean {
     if (!this.loaded) {
       this.logger.debug('Cannot report events because Iteratively not loaded.');
       return false;

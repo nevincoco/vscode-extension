@@ -15,7 +15,7 @@ suite('Pending Task', () => {
     strictEqual(task.isCompleted, true);
   });
 
-  test('Awaited pending task completes', done => {
+  test('awaited pending task completes', done => {
     task.waiter
       .then(() => {
         strictEqual(task.isCompleted, true);
@@ -28,7 +28,7 @@ suite('Pending Task', () => {
     task.complete();
   });
 
-  test("New pending task doesn't complete", () => {
+  test("new pending task doesn't complete", () => {
     strictEqual(task.isCompleted, false);
   });
 });
