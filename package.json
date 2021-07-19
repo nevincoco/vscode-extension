@@ -174,7 +174,7 @@
       "view/title": [
         {
           "command": "snyk.start",
-          "when": "view == snyk.views.analysis",
+          "when": "view == 'snyk.views.analysis.code.security' || view == 'snyk.views.analysis.code.quality'",
           "group": "navigation"
         },
         {
@@ -198,7 +198,7 @@
       {
         "command": "snyk.start",
         "title": "Snyk re-scan",
-        "icon": "$(refresh)"
+        "icon": "$(run)"
       },
       {
         "command": "snyk.settings",

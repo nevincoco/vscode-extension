@@ -139,10 +139,9 @@ class SnykAnalyzer implements AnalyzerInterface {
         suggestions,
         fileUri,
       });
-      this.codeSecurityReview.set(fileUri, [...securityIssues]);
-      this.codeQualityReview.set(fileUri, [...qualityIssues]);
 
-      console.log('security issues ' + securityIssues.length + ' quality issues ' + qualityIssues.length);
+      if (securityIssues.length > 0) this.codeSecurityReview.set(fileUri, [...securityIssues]);
+      if (qualityIssues.length > 0) this.codeQualityReview.set(fileUri, [...qualityIssues]);
     }
   }
 
