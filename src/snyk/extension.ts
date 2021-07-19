@@ -17,7 +17,7 @@ import {
 } from './constants/commands';
 import { COMMAND_DEBOUNCE_INTERVAL } from './constants/general';
 import { MEMENTO_FIRST_INSTALL_DATE_KEY } from './constants/globalState';
-import { SNYK_ANALYSIS_STATUS, SNYK_VIEW_ANALYSIS, SNYK_VIEW_SUPPORT } from './constants/views';
+import { SNYK_ANALYSIS_STATUS, SNYK_VIEW_ANALYSIS_CODE_SECURITY, SNYK_VIEW_SUPPORT } from './constants/views';
 import BundlesModule from './lib/modules/BundlesModule';
 import SnykLib from './lib/modules/SnykLib';
 import createFileWatcher from './lib/watchers/FilesWatcher';
@@ -73,12 +73,14 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
 
     this.registerCommands(context);
 
-    context.subscriptions.push(vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this)));
+    context.subscriptions.push(
+      vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this.viewManagerService)),
+    );
 
-    const issueProvider = new IssueProvider(this);
-    context.subscriptions.push(vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS, issueProvider));
+    const issueProvider = new IssueProvider(this.viewManagerService, this.analyzer, this.contextService, this.snykCode);
+    context.subscriptions.push(vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_SECURITY, issueProvider));
 
-    const treeView = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS, {
+    const treeView = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS_CODE_SECURITY, {
       treeDataProvider: issueProvider,
     });
     context.subscriptions.push(treeView);

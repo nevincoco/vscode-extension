@@ -100,8 +100,12 @@
     "views": {
       "snyk": [
         {
-          "id": "snyk.views.analysis",
-          "name": "Snyk Analysis"
+          "id": "snyk.views.analysis.code.security",
+          "name": "Code Security"
+        },
+        {
+          "id": "snyk.views.analysis.code.quality",
+          "name": "Code Quality"
         },
         {
           "id": "snyk.views.actions",

@@ -9,18 +9,11 @@ import { errorsLogs } from '../../messages/errorsServerLogMessages';
 import LoginModule from './LoginModule';
 
 abstract class BundlesModule extends LoginModule implements BundlesModuleInterface {
-  runningAnalysis = false;
-
-  private lastAnalysisStartingTimestamp = Date.now();
-  lastAnalysisDuration = 0;
-  lastAnalysisTimestamp = Date.now();
-
   files: string[] = [];
 
   updateStatus(status: string, progress: string): void {
-    this.analysisStatus = status;
-    this.analysisProgress = progress;
-    this.contextService.refreshViews();
+    this.snykCode.updateStatus(status, progress);
+    this.viewManagerService.refreshViews();
   }
 
   onScanFilesProgress(value: number): void {
@@ -44,17 +37,19 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
   }
 
   onError(error: Error): void {
-    this.runningAnalysis = false;
+    this.snykCode.stopAnalysis();
     // no need to wait for processError since onError is called asynchronously as well
     void this.processError(error, {
       message: errorsLogs.failedServiceAI,
     });
   }
 
+  // todo: refactor code to SnykCode/SAST class
   public async startAnalysis(manual: boolean): Promise<void> {
-    if (this.runningAnalysis) {
+    if (this.snykCode.isAnalysisRunning) {
       return;
     }
+
     try {
       const paths = (vscode.workspace.workspaceFolders || []).map(f => f.uri.fsPath);
 
@@ -67,8 +62,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
         });
 
         await this.contextService.setContext(SNYK_CONTEXT.WORKSPACE_FOUND, true);
-        this.runningAnalysis = true;
-        this.lastAnalysisStartingTimestamp = Date.now();
+        this.snykCode.startAnalysis();
 
         let result;
         if (this.changedFiles.size && this.remoteBundle) {
@@ -102,7 +96,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
             result: 'Success',
           });
 
-          this.contextService.refreshViews();
+          this.viewManagerService.refreshViews();
           this.suggestionProvider.checkCurrentSuggestion();
         }
       } else {
@@ -125,9 +119,7 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
 
       Logger.info('Code analysis failed.');
     } finally {
-      this.runningAnalysis = false;
-      this.lastAnalysisTimestamp = Date.now();
-      this.lastAnalysisDuration = this.lastAnalysisTimestamp - this.lastAnalysisStartingTimestamp;
+      this.snykCode.finaliseAnalysis();
     }
   }
 }

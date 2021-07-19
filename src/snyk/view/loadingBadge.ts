@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { BaseSnykModuleInterface } from '../../interfaces/SnykInterfaces';
-import { SNYK_VIEW_ANALYSIS } from '../constants/views';
+import { SNYK_VIEW_ANALYSIS_CODE_SECURITY } from '../constants/views';
 import { errorsLogs } from '../messages/errorsServerLogMessages';
+import { IViewManagerService } from '../services/viewManagerService';
 import { PendingTask, PendingTaskInterface } from '../utils/pendingTask';
 
 export interface ILoadingBadge {
@@ -12,7 +13,7 @@ export class LoadingBadge implements ILoadingBadge {
   private progressBadge: PendingTaskInterface | undefined;
   private shouldShowProgressBadge = false;
 
-  constructor(private initializedView: PendingTaskInterface) {}
+  constructor(private viewManagerService: IViewManagerService) {}
 
   private getProgressBadgePromise(): Promise<void> {
     if (!this.shouldShowProgressBadge) return Promise.resolve();
@@ -29,9 +30,9 @@ export class LoadingBadge implements ILoadingBadge {
       // Using closure on this to allow partial binding in arbitrary positions
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const self = this;
-      this.initializedView.waiter
+      this.viewManagerService.initializedView.waiter
         .then(() =>
-          vscode.window.withProgress({ location: { viewId: SNYK_VIEW_ANALYSIS } }, () =>
+          vscode.window.withProgress({ location: { viewId: SNYK_VIEW_ANALYSIS_CODE_SECURITY } }, () =>
             self.getProgressBadgePromise(),
           ),
         )

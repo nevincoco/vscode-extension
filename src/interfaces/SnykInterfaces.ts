@@ -10,8 +10,6 @@ export interface StatusBarItemInterface {
 }
 
 export interface BaseSnykModuleInterface {
-  analysisStatus: string;
-  analysisProgress: string;
   remoteBundle: IFileBundle;
   changedFiles: Set<string>;
   analyzer: AnalyzerInterface;
@@ -20,8 +18,6 @@ export interface BaseSnykModuleInterface {
   settingsWatcher: SnykWatcherInterface;
   contextService: IContextService;
   openerService: IOpenerService;
-  shouldShowAnalysis: boolean;
-  emitViewInitialized(): void;
   loadAnalytics(): void;
 
   // Abstract methods
@@ -41,9 +37,6 @@ export interface LoginModuleInterface {
 }
 
 export interface BundlesModuleInterface {
-  readonly runningAnalysis: boolean;
-  readonly lastAnalysisDuration: number;
-  readonly lastAnalysisTimestamp: number;
   startAnalysis(manual: boolean): Promise<void>;
 }
 
