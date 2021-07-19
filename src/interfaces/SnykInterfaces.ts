@@ -104,8 +104,8 @@ export interface IssuesListOptionsInterface {
 }
 
 export interface AnalyzerInterface {
-  activate(extension: ExtensionInterface | any): void;
-  snykReview: DiagnosticCollection | undefined;
+  codeSecurityReview: DiagnosticCollection | undefined;
+  codeQualityReview: DiagnosticCollection | undefined;
   analysisResults: IAnalysisResult;
   findSuggestion(suggestionName: string): ISuggestion | undefined;
   getFullSuggestion(
@@ -116,5 +116,4 @@ export interface AnalyzerInterface {
   checkFullSuggestion(suggestion: completeFileSuggestionType): boolean;
   createReviewResults(): void;
   updateReviewResultsPositions(extension: ExtensionInterface, updatedFile: openedTextEditorType): Promise<void>;
-  setIssuesMarkersDecoration(editor: TextEditor | undefined): void;
 }

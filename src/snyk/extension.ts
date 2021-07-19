@@ -17,7 +17,12 @@ import {
 } from './constants/commands';
 import { COMMAND_DEBOUNCE_INTERVAL } from './constants/general';
 import { MEMENTO_FIRST_INSTALL_DATE_KEY } from './constants/globalState';
-import { SNYK_ANALYSIS_STATUS, SNYK_VIEW_ANALYSIS_CODE_SECURITY, SNYK_VIEW_SUPPORT } from './constants/views';
+import {
+  SNYK_ANALYSIS_STATUS,
+  SNYK_VIEW_ANALYSIS_CODE_QUALITY,
+  SNYK_VIEW_ANALYSIS_CODE_SECURITY,
+  SNYK_VIEW_SUPPORT,
+} from './constants/views';
 import BundlesModule from './lib/modules/BundlesModule';
 import SnykLib from './lib/modules/SnykLib';
 import createFileWatcher from './lib/watchers/FilesWatcher';
@@ -26,6 +31,8 @@ import { NotificationService } from './services/notificationService';
 import { severityAsText } from './utils/analysisUtils';
 import { createDCIgnoreCommand, openSnykSettingsCommand } from './utils/vscodeCommandsUtils';
 import { IssueProvider } from './view/IssueProvider';
+import { CodeQualityIssueProvider } from './view/qualityIssueProvider';
+import { CodeSecurityIssueProvider } from './view/securityIssueProvider';
 import { SupportProvider } from './view/SupportProvider';
 
 class SnykExtension extends SnykLib implements ExtensionInterface {
@@ -77,20 +84,39 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
       vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this.viewManagerService)),
     );
 
-    const issueProvider = new IssueProvider(this.viewManagerService, this.analyzer, this.contextService, this.snykCode);
-    context.subscriptions.push(vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_SECURITY, issueProvider));
+    const codeSecurityIssueProvider = new CodeSecurityIssueProvider(
+        this.viewManagerService,
+        this.analyzer,
+        this.contextService,
+        this.snykCode,
+      ),
+      codeQualityIssueProvider = new CodeQualityIssueProvider(
+        this.viewManagerService,
+        this.analyzer,
+        this.contextService,
+        this.snykCode,
+      );
+    context.subscriptions.push(
+      vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_SECURITY, codeSecurityIssueProvider),
+      vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_QUALITY, codeQualityIssueProvider),
+    );
 
-    const treeView = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS_CODE_SECURITY, {
-      treeDataProvider: issueProvider,
+    const codeSecurityTree = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS_CODE_SECURITY, {
+      treeDataProvider: codeSecurityIssueProvider,
     });
-    context.subscriptions.push(treeView);
-    context.subscriptions.push(treeView.onDidChangeVisibility(e => this.onDidChangeAnalysisViewVisibility(e.visible)));
+    const codeQualityTree = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS_CODE_QUALITY, {
+      treeDataProvider: codeQualityIssueProvider,
+    });
+    context.subscriptions.push(
+      codeSecurityTree,
+      codeQualityTree,
+      codeSecurityTree.onDidChangeVisibility(e => this.onDidChangeAnalysisViewVisibility(e.visible)),
+    );
 
     vscode.workspace.onDidChangeWorkspaceFolders(this.startExtension.bind(this));
 
     this.editorsWatcher.activate(this);
     this.settingsWatcher.activate(this);
-    this.analyzer.activate(this);
     this.suggestionProvider.activate(this);
 
     void NotificationService.init(this.processError.bind(this));

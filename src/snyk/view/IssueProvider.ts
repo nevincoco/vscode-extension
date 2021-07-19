@@ -1,5 +1,4 @@
-import { Command, Diagnostic, Range, Uri } from 'vscode';
-import { AnalyzerInterface } from '../../interfaces/SnykInterfaces';
+import { Command, Diagnostic, DiagnosticCollection, Range, Uri } from 'vscode';
 import { SNYK_SEVERITIES } from '../constants/analysis';
 import { SNYK_OPEN_ISSUE_COMMAND } from '../constants/commands';
 import { ISnykCode } from '../lib/modules/code';
@@ -16,9 +15,9 @@ interface ISeverityCounts {
 export class IssueProvider extends NodeProvider {
   constructor(
     protected viewManagerService: IViewManagerService,
-    private analyzer: AnalyzerInterface,
-    private contextService: IContextService,
-    private snykCode: ISnykCode,
+    protected contextService: IContextService,
+    protected snykCode: ISnykCode,
+    protected diagnosticCollection: DiagnosticCollection | undefined,
   ) {
     super(viewManagerService);
   }
@@ -59,8 +58,8 @@ export class IssueProvider extends NodeProvider {
     const review: Node[] = [];
     let nIssues = 0;
     if (!this.contextService.shouldShowAnalysis) return review;
-    if (this.analyzer.snykReview)
-      this.analyzer.snykReview.forEach((uri: Uri, diagnostics: readonly Diagnostic[]): void => {
+    if (this.diagnosticCollection)
+      this.diagnosticCollection.forEach((uri: Uri, diagnostics: readonly Diagnostic[]): void => {
         const counts: ISeverityCounts = {
           [SNYK_SEVERITIES.information]: 0,
           [SNYK_SEVERITIES.warning]: 0,
