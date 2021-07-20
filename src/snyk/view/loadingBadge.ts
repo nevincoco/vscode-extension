@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { BaseSnykModuleInterface } from '../../interfaces/SnykInterfaces';
-import { SNYK_VIEW_ANALYSIS_CODE_SECURITY } from '../constants/views';
+import { SNYK_VIEW_PRODUCT } from '../constants/views';
 import { errorsLogs } from '../messages/errorsServerLogMessages';
 import { IViewManagerService } from '../services/viewManagerService';
 import { PendingTask, PendingTaskInterface } from '../utils/pendingTask';
@@ -31,10 +31,11 @@ export class LoadingBadge implements ILoadingBadge {
       // eslint-disable-next-line @typescript-eslint/no-this-alias
       const self = this;
       this.viewManagerService.initializedView.waiter
-        .then(() =>
-          vscode.window.withProgress({ location: { viewId: SNYK_VIEW_ANALYSIS_CODE_SECURITY } }, () =>
-            self.getProgressBadgePromise(),
-          ),
+        .then(
+          () =>
+            vscode.window.withProgress({ location: { viewId: SNYK_VIEW_PRODUCT } }, () =>
+              self.getProgressBadgePromise(),
+            ), // todo check if correct with respect to security/quality split
         )
         .then(
           () => undefined,
