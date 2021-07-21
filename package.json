@@ -100,6 +100,12 @@
     "views": {
       "snyk": [
         {
+          "id": "snyk.views.welcome",
+          "name": "Snyk",
+          "when": "!snyk:loggedIn || !snyk:codeEnabled || snyk:error || !snyk:workspaceFound",
+          "type": "webview"
+        },
+        {
           "id": "snyk.views.product",
           "name": "Snyk",
           "when": "!snyk:loggedIn || !snyk:codeEnabled || snyk:error || !snyk:workspaceFound"
@@ -145,6 +151,11 @@
         "view": "snyk.views.product",
         "contents": "We are now redirecting you to our auth page, go ahead and log in. If a browser window doesn't open after a few seconds, please copy the url below and manually paste it in a browser.\n[Copy URL to clipboard](command:snyk.copyAuthLink 'Copy URL to clipboard')",
         "when": "!snyk:error && !snyk:loggedIn && snyk:authenticating"
+      },
+      {
+        "view": "snyk.views.product",
+        "contents": "Thanks for connecting with Snyk. ✅\n 👉 You are almost set 🤗.\n[Enable Snyk Code and start analysing](command:snyk.enableCode 'Upload code to Snyk')\nIt looks like your organization's configuration is disabled, that's why you are seeing this message. You can easily enable it by pressing the above button and switching it on.\nWe apologize for the inconvenience and please [contact us](https://snyk.io/contact-us/?utm_source=vsc) if you have any other questions or concerns!",
+        "when": "!snyk:error && snyk:loggedIn && !snyk:codeEnabled"
       },
       {
         "view": "snyk.views.product",

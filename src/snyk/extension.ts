@@ -22,6 +22,7 @@ import {
   SNYK_VIEW_ANALYSIS_CODE_QUALITY,
   SNYK_VIEW_ANALYSIS_CODE_SECURITY,
   SNYK_VIEW_SUPPORT,
+  SNYK_VIEW_WELCOME,
 } from './constants/views';
 import BundlesModule from './lib/modules/BundlesModule';
 import SnykLib from './lib/modules/SnykLib';
@@ -30,10 +31,10 @@ import { errorsLogs } from './messages/errorsServerLogMessages';
 import { NotificationService } from './services/notificationService';
 import { severityAsText } from './utils/analysisUtils';
 import { createDCIgnoreCommand, openSnykSettingsCommand } from './utils/vscodeCommandsUtils';
-import { IssueProvider } from './view/IssueProvider';
 import { CodeQualityIssueProvider } from './view/qualityIssueProvider';
 import { CodeSecurityIssueProvider } from './view/securityIssueProvider';
 import { SupportProvider } from './view/SupportProvider';
+import { WelcomeViewProvider } from './view/welcomeViewProvider';
 
 class SnykExtension extends SnykLib implements ExtensionInterface {
   context: vscode.ExtensionContext | undefined;
@@ -80,10 +81,6 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
 
     this.registerCommands(context);
 
-    context.subscriptions.push(
-      vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this.viewManagerService)),
-    );
-
     const codeSecurityIssueProvider = new CodeSecurityIssueProvider(
         this.viewManagerService,
         this.analyzer,
@@ -97,8 +94,10 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
         this.snykCode,
       );
     context.subscriptions.push(
+      vscode.window.registerWebviewViewProvider(SNYK_VIEW_WELCOME, new WelcomeViewProvider(context.extensionUri)),
       vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_SECURITY, codeSecurityIssueProvider),
       vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_QUALITY, codeQualityIssueProvider),
+      vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this.viewManagerService)),
     );
 
     const codeSecurityTree = vscode.window.createTreeView(SNYK_VIEW_ANALYSIS_CODE_SECURITY, {

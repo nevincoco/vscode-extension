@@ -1,0 +1,15 @@
+.welcome {
+  text-align: center;
+}
+
+.avatar {
+  width: 62px;
+}
+
+.checkbox {
+  display: block;
+}
+
+button {
+  margin-block-start: 1em;
+}
