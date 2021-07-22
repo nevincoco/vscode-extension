@@ -3,6 +3,8 @@ import { ExtensionInterface, SnykWatcherInterface } from '../../../interfaces/Sn
 import {
   ADVANCED_ADVANCED_CODE_ENABLED_SETTING,
   ADVANCED_ADVANCED_MODE_SETTING,
+  CODE_QUALITY_ENABLED_SETTING,
+  CODE_SECURITY_ENABLED_SETTING,
   TOKEN_SETTING,
 } from '../../constants/settings';
 import { errorsLogs } from '../../messages/errorsServerLogMessages';
@@ -34,6 +36,8 @@ class SnykSettingsWatcher implements SnykWatcherInterface {
           TOKEN_SETTING,
           ADVANCED_ADVANCED_CODE_ENABLED_SETTING,
           ADVANCED_ADVANCED_MODE_SETTING,
+          CODE_SECURITY_ENABLED_SETTING,
+          CODE_QUALITY_ENABLED_SETTING,
         ].find(config => event.affectsConfiguration(config));
         if (change) {
           try {

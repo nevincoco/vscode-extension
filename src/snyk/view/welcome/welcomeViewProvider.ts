@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as vscode from 'vscode';
+import { configuration, FeaturesConfiguration } from '../../configuration';
+import { SNYK_CONTEXT } from '../../constants/views';
+import { IContextService } from '../../services/contextService';
+
+type WebviewEventMessage = {
+  type: string;
+  value: unknown;
+};
 
 export class WelcomeViewProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri, private readonly contextService: IContextService) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -21,21 +29,23 @@ export class WelcomeViewProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(async (data: WebviewEventMessage) => {
+      switch (data.type) {
+        case 'featuresSelected': {
+          await configuration.setFeaturesConfiguration(data.value as FeaturesConfiguration);
+          await this.contextService.setContext(SNYK_CONTEXT.FEATURES_SELECTED, true);
+          break;
+        }
+      }
+    });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-    // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
-
-    // Do the same for the stylesheet.
-    // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'media', 'view', 'welcome', 'vscode.css'),
-    );
-    const styleWelcomeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'media', 'view', 'welcome', 'welcome.css'),
-    );
-    const avatarUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'images', 'avatar-transparent.svg'));
+    const scriptUri = this.getWebViewUri('out', 'snyk', 'view', 'welcome', 'welcomeViewScript.js');
+    const styleVSCodeUri = this.getWebViewUri('media', 'view', 'welcome', 'vscode.css');
+    const styleWelcomeUri = this.getWebViewUri('media', 'view', 'welcome', 'welcome.css');
+    const avatarUri = this.getWebViewUri('images', 'avatar-transparent.svg');
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
@@ -65,18 +75,23 @@ export class WelcomeViewProvider implements vscode.WebviewViewProvider {
         </div>
 
         <div class="checkbox">
-          <input type="checkbox" id="security" name="security" checked>
-          <label for="security">Snyk Code Security</label>
+          <input type="checkbox" id="codeSecurityEnabled" name="codeSecurityEnabled" checked>
+          <label for="codeSecurityEnabled">Snyk Code Security</label>
         </div>
         <div class="checkbox">
-          <input type="checkbox" id="quality" name="quality">
-          <label for="quality">Snyk Code Quality</label>
+          <input type="checkbox" id="codeQualityEnabled" name="codeQualityEnabled">
+          <label for="codeQualityEnabled">Snyk Code Quality</label>
         </div>
 
-				<button class="add-color-button">Analyze now!</button>
+				<button class="analyze-button">Analyze now!</button>
 
+				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
+  }
+
+  private getWebViewUri(...pathSegments: string[]) {
+    return this._view?.webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, ...pathSegments));
   }
 }
 

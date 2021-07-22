@@ -51,10 +51,17 @@ export default class SnykLib extends BundlesModule implements SnykLibInterface {
       return;
     }
 
-    const codeEnabled = await this.checkCodeEnabled();
     await this.contextService.setContext(SNYK_CONTEXT.AUTHENTICATING, false);
     await this.contextService.setContext(SNYK_CONTEXT.LOGGEDIN, true);
 
+    if (!configuration.getFeaturesConfiguration()) {
+      await this.contextService.setContext(SNYK_CONTEXT.FEATURES_SELECTED, false);
+      return;
+    }
+
+    await this.contextService.setContext(SNYK_CONTEXT.FEATURES_SELECTED, true);
+
+    const codeEnabled = await this.checkCodeEnabled();
     if (!codeEnabled) {
       return;
     }

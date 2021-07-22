@@ -84,6 +84,16 @@
             "markdownDescription": "Mirrors if Snyk Code is enabled or disabled for [your Snyk organisation](https://app.snyk.io/manage/snyk-code). Please do not manually edit this configuration as it might cause unpredictable behaviour.",
             "scope": "window",
             "default": null
+          },
+          "snyk.features.codeSecurity": {
+            "type": "boolean",
+            "title": "Snyk Code security issues",
+            "description": "Find and fix vulnerabilities in your application code in real time"
+          },
+          "snyk.features.codeQuality": {
+            "type": "boolean",
+            "title": "Snyk Code quality issues",
+            "description": "Find and fix code quality issues in your application code in real time"
           }
         }
       }
@@ -102,23 +112,23 @@
         {
           "id": "snyk.views.welcome",
           "name": "Snyk",
-          "when": "!snyk:loggedIn || !snyk:codeEnabled || snyk:error || !snyk:workspaceFound",
+          "when": "snyk:loggedIn && !snyk:featuresSelected && !snyk:error",
           "type": "webview"
         },
         {
-          "id": "snyk.views.product",
+          "id": "snyk.views.connect",
           "name": "Snyk",
-          "when": "!snyk:loggedIn || !snyk:codeEnabled || snyk:error || !snyk:workspaceFound"
+          "when": "!snyk:loggedIn || snyk:codeEnabled === false || snyk:error || snyk:workspaceFound === false"
         },
         {
           "id": "snyk.views.analysis.code.security",
           "name": "Code Security",
-          "when": "snyk:loggedIn && snyk:codeEnabled"
+          "when": "snyk:loggedIn && snyk:featuresSelected && snyk:codeEnabled"
         },
         {
           "id": "snyk.views.analysis.code.quality",
           "name": "Code Quality",
-          "when": "snyk:loggedIn && snyk:codeEnabled"
+          "when": "snyk:loggedIn && snyk:featuresSelected && snyk:codeEnabled"
         },
         {
           "id": "snyk.views.actions",
@@ -133,37 +143,32 @@
     },
     "viewsWelcome": [
       {
-        "view": "snyk.views.product",
+        "view": "snyk.views.connect",
         "contents": "Snyk is temporarily unavailable\nWe are automatically retrying to connect...",
         "when": "snyk:error == 'transient'"
       },
       {
-        "view": "snyk.views.product",
+        "view": "snyk.views.connect",
         "contents": "Snyk has encountered a problem. Please restart the extension: \n[Restart](command:snyk.start 'Restart Snyk')\nIf the error persists, please check your [settings](command:snyk.settings) and [contact us](https://snyk.io/contact-us/?utm_source=vsc)!",
         "when": "snyk:error == 'blocking'"
       },
       {
-        "view": "snyk.views.product",
-        "contents": "Welcome to Snyk for Visual Studio Code. 👋\nLet's start by connecting VS Code with Snyk:\n[Connect VS Code with Snyk and analyse](command:snyk.login 'Connect with Snyk and analyse')\n👉 Snyk's mission is to finds bugs, fast. Connect with Snyk to start your first analysis!",
+        "view": "snyk.views.connect",
+        "contents": "Welcome to Snyk for Visual Studio Code. 👋\nLet's start by connecting VS Code with Snyk:\n[Connect VS Code with Snyk](command:snyk.login 'Connect with Snyk')\n👉 Snyk's mission is to finds bugs, fast. Connect with Snyk to start your first analysis!",
         "when": "!snyk:error && !snyk:loggedIn"
       },
       {
-        "view": "snyk.views.product",
+        "view": "snyk.views.connect",
         "contents": "We are now redirecting you to our auth page, go ahead and log in. If a browser window doesn't open after a few seconds, please copy the url below and manually paste it in a browser.\n[Copy URL to clipboard](command:snyk.copyAuthLink 'Copy URL to clipboard')",
         "when": "!snyk:error && !snyk:loggedIn && snyk:authenticating"
       },
       {
-        "view": "snyk.views.product",
+        "view": "snyk.views.connect",
         "contents": "Thanks for connecting with Snyk. ✅\n 👉 You are almost set 🤗.\n[Enable Snyk Code and start analysing](command:snyk.enableCode 'Upload code to Snyk')\nIt looks like your organization's configuration is disabled, that's why you are seeing this message. You can easily enable it by pressing the above button and switching it on.\nWe apologize for the inconvenience and please [contact us](https://snyk.io/contact-us/?utm_source=vsc) if you have any other questions or concerns!",
-        "when": "!snyk:error && snyk:loggedIn && !snyk:codeEnabled"
+        "when": "!snyk:error && snyk:loggedIn && snyk:featuresSelected && !snyk:codeEnabled"
       },
       {
-        "view": "snyk.views.product",
-        "contents": "Thanks for connecting with Snyk. ✅\n 👉 You are almost set 🤗.\n[Enable Snyk Code and start analysing](command:snyk.enableCode 'Upload code to Snyk')\nIt looks like your organization's configuration is disabled, that's why you are seeing this message. You can easily enable it by pressing the above button and switching it on.\nWe apologize for the inconvenience and please [contact us](https://snyk.io/contact-us/?utm_source=vsc) if you have any other questions or concerns!",
-        "when": "!snyk:error && snyk:loggedIn && !snyk:codeEnabled"
-      },
-      {
-        "view": "snyk.views.product",
+        "view": "snyk.views.connect",
         "contents": "Open a workspace or a folder in Visual Studio Code to start the analysis.",
         "when": "!snyk:error && snyk:loggedIn && snyk:codeEnabled && !snyk:workspaceFound"
       },

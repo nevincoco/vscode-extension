@@ -1,5 +1,5 @@
+export const SNYK_VIEW_CONNECT = 'snyk.views.connect';
 export const SNYK_VIEW_WELCOME = 'snyk.views.welcome';
-export const SNYK_VIEW_PRODUCT = 'snyk.views.product';
 export const SNYK_VIEW_ANALYSIS_CODE_SECURITY = 'snyk.views.analysis.code.security';
 export const SNYK_VIEW_ANALYSIS_CODE_QUALITY = 'snyk.views.analysis.code.quality';
 export const SNYK_VIEW_SUPPORT = 'snyk.views.support';
@@ -11,6 +11,7 @@ export const SNYK_VIEW_SUGGESTION = 'snyk.views.suggestion';
 export const SNYK_CONTEXT = {
   LOGGEDIN: 'loggedIn',
   AUTHENTICATING: 'authenticating',
+  FEATURES_SELECTED: 'featuresSelected',
   CODE_ENABLED: 'codeEnabled',
   WORKSPACE_FOUND: 'workspaceFound',
   ERROR: 'error',

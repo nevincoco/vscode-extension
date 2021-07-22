@@ -34,7 +34,7 @@ import { createDCIgnoreCommand, openSnykSettingsCommand } from './utils/vscodeCo
 import { CodeQualityIssueProvider } from './view/qualityIssueProvider';
 import { CodeSecurityIssueProvider } from './view/securityIssueProvider';
 import { SupportProvider } from './view/SupportProvider';
-import { WelcomeViewProvider } from './view/welcomeViewProvider';
+import { WelcomeViewProvider } from './view/welcome/welcomeViewProvider';
 
 class SnykExtension extends SnykLib implements ExtensionInterface {
   context: vscode.ExtensionContext | undefined;
@@ -94,7 +94,10 @@ class SnykExtension extends SnykLib implements ExtensionInterface {
         this.snykCode,
       );
     context.subscriptions.push(
-      vscode.window.registerWebviewViewProvider(SNYK_VIEW_WELCOME, new WelcomeViewProvider(context.extensionUri)),
+      vscode.window.registerWebviewViewProvider(
+        SNYK_VIEW_WELCOME,
+        new WelcomeViewProvider(context.extensionUri, this.contextService),
+      ),
       vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_SECURITY, codeSecurityIssueProvider),
       vscode.window.registerTreeDataProvider(SNYK_VIEW_ANALYSIS_CODE_QUALITY, codeQualityIssueProvider),
       vscode.window.registerTreeDataProvider(SNYK_VIEW_SUPPORT, new SupportProvider(this.viewManagerService)),
