@@ -118,7 +118,7 @@
         {
           "id": "snyk.views.connect",
           "name": "Snyk",
-          "when": "!snyk:loggedIn || snyk:codeEnabled === false || snyk:error || snyk:workspaceFound === false"
+          "when": "snyk:featuresSelected && !snyk:codeEnabled || !snyk:loggedIn || snyk:error || !snyk:workspaceFound"
         },
         {
           "id": "snyk.views.analysis.code.security",
