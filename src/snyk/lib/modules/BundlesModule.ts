@@ -2,6 +2,7 @@ import { analyzeFolders, constants, extendAnalysis } from '@snyk/code-client';
 import * as _ from 'lodash';
 import * as vscode from 'vscode';
 import { BundlesModuleInterface } from '../../../interfaces/SnykInterfaces';
+import { SupportedAnalysisProperties } from '../../analytics/itly';
 import { configuration } from '../../configuration';
 import { SNYK_ANALYSIS_STATUS, SNYK_CONTEXT } from '../../constants/views';
 import { Logger } from '../../logger';
@@ -50,13 +51,20 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       return;
     }
 
+    const enabledFeatures = configuration.getFeaturesConfiguration();
+
     try {
       const paths = (vscode.workspace.workspaceFolders || []).map(f => f.uri.fsPath);
 
       if (paths.length) {
         Logger.info('Code analysis started.');
+
+        const analysisType: SupportedAnalysisProperties[] = [];
+        if (enabledFeatures?.codeSecurityEnabled) analysisType.push('Snyk Code Security');
+        if (enabledFeatures?.codeQualityEnabled) analysisType.push('Snyk Code Quality');
+
         this.analytics.logAnalysisIsTriggered({
-          analysisType: ['Snyk Code Security', 'Snyk Code Quality'],
+          analysisType,
           ide: 'Visual Studio Code',
           triggeredByUser: manual,
         });
@@ -85,16 +93,21 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
           this.analyzer.createReviewResults();
 
           Logger.info('Code analysis finished.');
-          this.analytics.logAnalysisIsReady({
-            ide: 'Visual Studio Code',
-            analysisType: 'Snyk Code Security',
-            result: 'Success',
-          });
-          this.analytics.logAnalysisIsReady({
-            ide: 'Visual Studio Code',
-            analysisType: 'Snyk Code Quality',
-            result: 'Success',
-          });
+
+          if (enabledFeatures?.codeSecurityEnabled) {
+            this.analytics.logAnalysisIsReady({
+              ide: 'Visual Studio Code',
+              analysisType: 'Snyk Code Security',
+              result: 'Success',
+            });
+          }
+          if (enabledFeatures?.codeQualityEnabled) {
+            this.analytics.logAnalysisIsReady({
+              ide: 'Visual Studio Code',
+              analysisType: 'Snyk Code Quality',
+              result: 'Success',
+            });
+          }
 
           this.viewManagerService.refreshViews();
           this.suggestionProvider.checkCurrentSuggestion();
@@ -106,16 +119,20 @@ abstract class BundlesModule extends LoginModule implements BundlesModuleInterfa
       await this.processError(err, {
         message: errorsLogs.failedAnalysis,
       });
-      this.analytics.logAnalysisIsReady({
-        ide: 'Visual Studio Code',
-        analysisType: 'Snyk Code Security',
-        result: 'Error',
-      });
-      this.analytics.logAnalysisIsReady({
-        ide: 'Visual Studio Code',
-        analysisType: 'Snyk Code Quality',
-        result: 'Error',
-      });
+      if (enabledFeatures?.codeSecurityEnabled) {
+        this.analytics.logAnalysisIsReady({
+          ide: 'Visual Studio Code',
+          analysisType: 'Snyk Code Security',
+          result: 'Error',
+        });
+      }
+      if (enabledFeatures?.codeQualityEnabled) {
+        this.analytics.logAnalysisIsReady({
+          ide: 'Visual Studio Code',
+          analysisType: 'Snyk Code Quality',
+          result: 'Error',
+        });
+      }
 
       Logger.info('Code analysis failed.');
     } finally {
